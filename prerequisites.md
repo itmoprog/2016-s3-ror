@@ -38,40 +38,40 @@
 
   Тем не менее, для наших занятий я заранее заготовил настройки будущей виртуальной машины, поэтому вы можете заменить содержимое создавшегося файла на следующее:
   ```ruby
-Vagrant.configure('2') do |config|
-  config.vbguest.auto_update = false
-  config.vm.box_check_update = false
-  config.vm.box = 'ubuntu/xenial64'
-  config.vm.network 'forwarded_port', guest: 3000, host: 3000
-  config.vm.hostname = 'itmo'
-  config.vm.provision 'shell', path: 'setup.sh'
-  config.vm.provider 'virtualbox' do |vm|
-    vm.name = 'itmoprog'
-    vm.memory = 512
-    vm.cpus = 1
+  Vagrant.configure('2') do |config|
+    config.vbguest.auto_update = false
+    config.vm.box_check_update = false
+    config.vm.box = 'ubuntu/xenial64'
+    config.vm.network 'forwarded_port', guest: 3000, host: 3000
+    config.vm.hostname = 'itmo'
+    config.vm.provision 'shell', path: 'setup.sh'
+    config.vm.provider 'virtualbox' do |vm|
+      vm.name = 'itmoprog'
+      vm.memory = 512
+      vm.cpus = 1
+    end
+    config.vm.post_up_message = <<-WELCOME
+  All prerequisites and preparations are fulfiled! Congratulations!
+  = Welcome to the ITMO Advanced Maths Department Testing Ground! =
+  Local directory: /vagrant
+  Accessible over: http://localhost:3000
+    WELCOME
   end
-  config.vm.post_up_message = <<-WELCOME
-All prerequisites and preparations are fulfiled! Congratulations!
-= Welcome to the ITMO Advanced Maths Department Testing Ground! =
-Local directory: /vagrant
-Accessible over: http://localhost:3000
-  WELCOME
-end
   ```
 
 4. Помимо `Vagrantfile` в той же директории должен находиться и файл `setup.sh`, отвечающий за установку дополнительного ПО. Создайте его:
 
   ```bash
-sudo apt-get update && sudo apt-get -y upgrade
-sudo apt-get -y install nodejs curl
-command curl -sSL https://rvm.io/mpapis.asc | gpg --import -
-\curl -sSL https://get.rvm.io | bash -s stable
-source /etc/profile.d/rvm.sh
-bash --login
-rvm install 2.3.1
-rvm use --default 2.3.1
-gem install bundler --no-ri --no-rdoc
-gem install rails
+  sudo apt-get update && sudo apt-get -y upgrade
+  sudo apt-get -y install nodejs curl
+  command curl -sSL https://rvm.io/mpapis.asc | gpg --import -
+  \curl -sSL https://get.rvm.io | bash -s stable
+  source /etc/profile.d/rvm.sh
+  bash --login
+  rvm install 2.3.1
+  rvm use --default 2.3.1
+  gem install bundler --no-ri --no-rdoc
+  gem install rails
   ```
 
 5. Файлы созданы. Теперь можно установить и базово настроить ОС, а также установить и настроить ПО. Вот здесь-то и пригождается Vagrant — всё это делается одной лишь командой из любой консоли (но лучше не `cmd` для дальнейшей работы с ssh):
